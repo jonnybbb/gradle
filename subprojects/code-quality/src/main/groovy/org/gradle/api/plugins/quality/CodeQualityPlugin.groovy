@@ -18,6 +18,7 @@ package org.gradle.api.plugins.quality
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.GroovyBasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPluginConvention
@@ -27,21 +28,21 @@ import org.gradle.api.tasks.SourceSet
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
- /**
+/**
  * A {@link Plugin} which measures and enforces code quality for Java and Groovy projects.
  */
 public class CodeQualityPlugin implements Plugin<Project> {
-    public static final String CHECKSTYLE_MAIN_TASK = "checkstyleMain";
-    public static final String CHECKSTYLE_TEST_TASK = "checkstyleTest";
-    public static final String CODE_NARC_MAIN_TASK = "codenarcMain";
-    public static final String CODE_NARC_TEST_TASK = "codenarcTest";
-    public static final String FINDBUGS_MAIN_TASK = "findbugsMain";
-    public static final String FINDBUGS_TEST_TASK = "findbugsMain";
+    static final String CHECKSTYLE_MAIN_TASK = "checkstyleMain";
+    static final String CHECKSTYLE_TEST_TASK = "checkstyleTest";
+    static final String CODE_NARC_MAIN_TASK = "codenarcMain";
+    static final String CODE_NARC_TEST_TASK = "codenarcTest";
+    static final String FINDBUGS_MAIN_TASK = "findbugsMain";
+    static final String FINDBUGS_TEST_TASK = "findbugsMain";
     private static final Logger LOGGER = LoggerFactory.getLogger(CodeQualityPlugin.class);
     private static final String FINDBUGS = "findbugs"
 
 
-    public void apply(final Project project) {
+    public void apply(Project project) {
         project.plugins.apply(ReportingBasePlugin.class);
 
         def javaPluginConvention = new JavaCodeQualityPluginConvention(project)
@@ -87,6 +88,7 @@ public class CodeQualityPlugin implements Plugin<Project> {
         task.setDescription("Executes all quality checks");
         task.dependsOn project.tasks.withType(Checkstyle.class)
         task.dependsOn project.tasks.withType(CodeNarc.class)
+        task.dependsOn project.tasks.withType(Findbugs.class)
     }
 
     private void configureForJavaPlugin(Project project, JavaCodeQualityPluginConvention pluginConvention) {
@@ -99,6 +101,18 @@ public class CodeQualityPlugin implements Plugin<Project> {
             checkstyle.conventionMapping.configFile = { pluginConvention.checkstyleConfigFile }
             checkstyle.conventionMapping.resultFile = { new File(pluginConvention.checkstyleResultsDir, "${set.name}.xml") }
             checkstyle.conventionMapping.classpath = { set.compileClasspath; }
+
+
+            String findbugsTaskName = set.getTaskName(FINDBUGS, null)
+            def findbugs = project.tasks.add(findbugsTaskName, Findbugs.class);
+            String compileJavaTaskName = set.getCompileJavaTaskName()
+            project.getTasks().getByName(findbugsTaskName).dependsOn(compileJavaTaskName);
+            findbugs.description = "Runs Findbugs against the $set.name Java source code."
+            findbugs.conventionMapping.defaultSource = { set.allJava; }
+            findbugs.conventionMapping.configFile = { pluginConvention.findbugsConfigFile }
+            findbugs.conventionMapping.reportFile = { new File(pluginConvention.findbugsResultsDir, "${set.name}.xml") }
+            findbugs.conventionMapping.classpath = {project.configurations.getByName(FINDBUGS)}
+
         }
     }
 
