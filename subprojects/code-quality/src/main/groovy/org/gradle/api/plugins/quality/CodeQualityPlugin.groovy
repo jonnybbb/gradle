@@ -70,12 +70,12 @@ public class CodeQualityPlugin implements Plugin<Project> {
         }
     }
 
-  private void configureFindbugsDefaults(Project project, JavaCodeQualityPluginConvention pluginConvention) {
-    project.tasks.withType(Findbugs.class) {Findbugs findbugs ->
-      findbugs.conventionMapping.configFile = { pluginConvention.findbugsConfigFile }
-      findbugs.conventionMapping.map('properties') { pluginConvention.findbugsProperties }
+    private void configureFindbugsDefaults(Project project, JavaCodeQualityPluginConvention pluginConvention) {
+        project.tasks.withType(Findbugs.class) {Findbugs findbugs ->
+            findbugs.conventionMapping.configFile = { pluginConvention.findbugsConfigFile }
+            findbugs.conventionMapping.map('properties') { pluginConvention.findbugsProperties }
+        }
     }
-  }
 
     private void configureCodeNarcDefaults(Project project, GroovyCodeQualityPluginConvention pluginConvention) {
         project.tasks.withType(CodeNarc) { CodeNarc codenarc ->
@@ -93,6 +93,7 @@ public class CodeQualityPlugin implements Plugin<Project> {
 
     private void configureForJavaPlugin(Project project, JavaCodeQualityPluginConvention pluginConvention) {
         configureCheckTask(project);
+        project.configurations.add(FINDBUGS)
 
         project.convention.getPlugin(JavaPluginConvention).sourceSets.all {SourceSet set ->
             def checkstyle = project.tasks.add(set.getTaskName("checkstyle", null), Checkstyle)
@@ -104,7 +105,7 @@ public class CodeQualityPlugin implements Plugin<Project> {
 
 
             String findbugsTaskName = set.getTaskName(FINDBUGS, null)
-            def findbugs = project.tasks.add(findbugsTaskName, Findbugs.class);
+            def findbugs = project.tasks.add(findbugsTaskName, Findbugs);
             String compileJavaTaskName = set.getCompileJavaTaskName()
             project.getTasks().getByName(findbugsTaskName).dependsOn(compileJavaTaskName);
             findbugs.description = "Runs Findbugs against the $set.name Java source code."
