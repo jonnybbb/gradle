@@ -78,6 +78,35 @@ class CodeQualityPluginTest {
         assertThat(task, dependsOn(hasItems(CodeQualityPlugin.CHECKSTYLE_MAIN_TASK, CodeQualityPlugin.CHECKSTYLE_TEST_TASK, 'checkstyleCustom')))
     }
 
+
+  @Test
+  public void createsTasksAndAppliesFindbugsMappingsForEachJavaSourceSet() {
+        plugin.apply(project)
+
+        project.plugins.apply(JavaPlugin)
+        project.findbugsProperties.someProp = 'someValue'
+
+        def task = project.tasks[CodeQualityPlugin.FINDBUGS_MAIN_TASK]
+        assertThat(task, instanceOf(Findbugs))
+        assertThat(task.defaultSource, equalTo(project.sourceSets.main.allJava))
+        assertThat(task.configFile, equalTo(project.findbugsConfigFile))
+        assertThat(task.reportFile, equalTo(project.file("build/findbugs/main.xml")))
+      //  assertThat(task.properties, equalTo(project.findbugsProperties))
+        assertThat(task, dependsOn(JavaPlugin.COMPILE_JAVA_TASK_NAME))
+
+        project.sourceSets.add('custom')
+        task = project.tasks['findbugsCustom']
+        assertThat(task, instanceOf(Findbugs))
+        assertThat(task.defaultSource, equalTo(project.sourceSets.custom.allJava))
+        assertThat(task.configFile, equalTo(project.findbugsConfigFile))
+        assertThat(task.reportFile, equalTo(project.file("build/findbugs/custom.xml")))
+        assertThat(task, dependsOn(hasItem("compileCustomJava")))
+
+        task = project.tasks[JavaBasePlugin.CHECK_TASK_NAME]
+        assertThat(task, dependsOn(hasItems(CodeQualityPlugin.FINDBUGS_MAIN_TASK, CodeQualityPlugin.FINDBUGS_TEST_TASK, 'findbugsCustom')))
+    }
+
+
     @Test public void createsTasksAndAppliesMappingsForEachGroovySourceSet() {
         plugin.apply(project)
 
@@ -125,6 +154,11 @@ class CodeQualityPluginTest {
         task = project.tasks.add('customCodeNarc', CodeNarc)
         assertThat(task.source, isEmpty())
         assertThat(task.configFile, equalTo(project.codeNarcConfigFile))
+        assertThat(task.reportFile, nullValue())
+
+       task = project.tasks.add('customFindbugs', Findbugs)
+        assertThat(task.source, isEmpty())
+        assertThat(task.configFile, equalTo(project.findbugsConfigFile))
         assertThat(task.reportFile, nullValue())
     }
 }

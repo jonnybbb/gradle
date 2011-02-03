@@ -35,12 +35,30 @@ class JavaCodeQualityPluginConvention {
      */
     Map<String, Object> checkstyleProperties = [:]
 
+
+    /**
+     * The name of the Findbugs configuration file, relative to the project directory.
+     */
+    String findbugsConfigFileName
+
+     /**
+     * The name of the directory to write Findbugs results to, relative to the build directory.
+     */
+    String findbugsResultsDirName
+
+     /**
+     * The set of properties to substitute into the Findbugs configuration file.
+     */
+    Map<String, Object> findbugsProperties = [:]
+
     private ProjectInternal project
 
     def JavaCodeQualityPluginConvention(Project project) {
         this.project = project
         checkstyleConfigFileName = 'config/checkstyle/checkstyle.xml'
         checkstyleResultsDirName = 'checkstyle'
+        findbugsConfigFileName = 'config/findbugs/findbugs.xml'
+        findbugsResultsDirName = 'findbugs'
     }
 
     /**
@@ -55,5 +73,13 @@ class JavaCodeQualityPluginConvention {
      */
     File getCheckstyleResultsDir() {
         project.fileResolver.withBaseDir(project.buildDir).resolve(checkstyleResultsDirName)
+    }
+
+   File getFindbugsConfigFile() {
+        project.file(findbugsConfigFileName)
+}
+
+    File getFindbugsResultsDir() {
+        project.fileResolver.withBaseDir(project.buildDir).resolve(findbugsResultsDirName)
     }
 }
