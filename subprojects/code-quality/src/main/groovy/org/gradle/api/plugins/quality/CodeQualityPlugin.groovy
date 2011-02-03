@@ -25,7 +25,7 @@ import org.gradle.api.plugins.ReportingBasePlugin
 import org.gradle.api.tasks.GroovySourceSet
 import org.gradle.api.tasks.SourceSet
 
-/**
+ /**
  * A {@link Plugin} which measures and enforces code quality for Java and Groovy projects.
  */
 public class CodeQualityPlugin implements Plugin<Project> {
@@ -44,6 +44,7 @@ public class CodeQualityPlugin implements Plugin<Project> {
         project.convention.plugins.groovyCodeQuality = groovyPluginConvention
 
         configureCheckstyleDefaults(project, javaPluginConvention)
+        configureFindbugsDefaults(project, javaPluginConvention)
         configureCodeNarcDefaults(project, groovyPluginConvention)
 
         project.plugins.withType(JavaBasePlugin) {
@@ -60,6 +61,13 @@ public class CodeQualityPlugin implements Plugin<Project> {
             checkstyle.conventionMapping.map('properties') { pluginConvention.checkstyleProperties }
         }
     }
+
+  private void configureFindbugsDefaults(Project project, JavaCodeQualityPluginConvention pluginConvention) {
+    project.tasks.withType(Findbugs.class) {Findbugs findbugs ->
+      findbugs.conventionMapping.configFile = { pluginConvention.findbugsConfigFile }
+      findbugs.conventionMapping.map('properties') { pluginConvention.findbugsProperties }
+    }
+  }
 
     private void configureCodeNarcDefaults(Project project, GroovyCodeQualityPluginConvention pluginConvention) {
         project.tasks.withType(CodeNarc) { CodeNarc codenarc ->
