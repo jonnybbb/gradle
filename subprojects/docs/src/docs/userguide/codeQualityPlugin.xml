@@ -20,6 +20,7 @@
         The following tools are supported:
         <itemizedlist>
             <listitem><para><ulink url="http://checkstyle.sourceforge.net/index.html">Checkstyle</ulink></para></listitem>
+            <listitem><para><ulink url="http://findbugs.sourceforge.net/">Findbugs</ulink></para></listitem>
             <listitem><para><ulink url="http://codenarc.sourceforge.net/index.html">CodeNarc</ulink></para></listitem>
         </itemizedlist>
     </para>
@@ -69,6 +70,34 @@
                 <td><apilink class="org.gradle.api.plugins.quality.Checkstyle"/></td>
                 <td>Runs Checkstyle against the given source set's Java source files.</td>
             </tr>
+            
+            
+                        <tr>
+                <td>
+                    <literal>findbugsMain</literal>
+                </td>
+                <td>-</td>
+                <td><apilink class="org.gradle.api.plugins.quality.Findbugs"/></td>
+                <td>Runs Findbugs against the production Java source files.</td>
+            </tr>
+            <tr>
+                <td>
+                    <literal>findbugsTest</literal>
+                </td>
+                <td><literal>compile</literal></td>
+                <td><apilink class="org.gradle.api.plugins.quality.Findbugs"/></td>
+                <td>Runs Findbugs against the test Java source files.</td>
+            </tr>
+            <tr>
+                <td>
+                    <literal>findbugs<replaceable>SourceSet</replaceable></literal>
+                </td>
+                <td>-</td>
+                <td><apilink class="org.gradle.api.plugins.quality.Findbugs"/></td>
+                <td>Runs Findbugs against the given source set's Java source files.</td>
+            </tr>
+            
+            
         </table>
 
         <para>When used with the Groovy plugin, the code quality plugin adds the following tasks to the project:</para>
@@ -111,8 +140,10 @@
             </thead>
             <tr>
                 <td>check</td>
-                <td>All Checkstyle and CodeNarc tasks, including <literal>checkstyleMain</literal>,
+                <td>All Checkstyle Findbugs, and CodeNarc tasks, including <literal>checkstyleMain</literal>,
                     <literal>checkstyleTest</literal>,
+                    <literal>findbugsMain</literal>,
+                    <literal>findbugsTest</literal>,
                     <literal>codenarcMain</literal> and
                     <literal>codenarcTest</literal>
                 </td>
@@ -142,6 +173,12 @@
                     <filename>config/checkstyle/checkstyle.xml</filename>
                 </td>
                 <td>Checkstyle configuration file</td>
+            </tr>
+            <tr>
+                <td>
+                    <filename>config/findbugs/findbugs.xml</filename>
+                </td>
+                <td>Findbugs configuration file</td>
             </tr>
             <tr>
                 <td>
@@ -241,6 +278,11 @@
                 </td>
             </tr>
         </table>
+
+
+
+
+
 
         <para>These convention properties are provided by a convention object of type
             <apilink class="org.gradle.api.plugins.quality.JavaCodeQualityPluginConvention"/>.</para>
