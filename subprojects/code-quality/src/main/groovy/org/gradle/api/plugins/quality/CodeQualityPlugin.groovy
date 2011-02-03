@@ -27,7 +27,7 @@ import org.gradle.api.tasks.SourceSet
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
- /**
+/**
  * A {@link Plugin} which measures and enforces code quality for Java and Groovy projects.
  */
 public class CodeQualityPlugin implements Plugin<Project> {
@@ -92,7 +92,7 @@ public class CodeQualityPlugin implements Plugin<Project> {
 
     private void configureForJavaPlugin(Project project, JavaCodeQualityPluginConvention pluginConvention) {
         configureCheckTask(project);
-     project.configurations.add(FINDBUGS)
+        project.configurations.add(FINDBUGS)
 
         project.convention.getPlugin(JavaPluginConvention).sourceSets.all {SourceSet set ->
             def checkstyle = project.tasks.add(set.getTaskName("checkstyle", null), Checkstyle)
