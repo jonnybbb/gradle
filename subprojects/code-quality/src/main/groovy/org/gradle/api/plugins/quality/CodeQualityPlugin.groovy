@@ -69,12 +69,12 @@ public class CodeQualityPlugin implements Plugin<Project> {
         }
     }
 
-  private void configureFindbugsDefaults(Project project, JavaCodeQualityPluginConvention pluginConvention) {
-    project.tasks.withType(Findbugs.class) {Findbugs findbugs ->
-      findbugs.conventionMapping.configFile = { pluginConvention.findbugsConfigFile }
-      findbugs.conventionMapping.map('properties') { pluginConvention.findbugsProperties }
+    private void configureFindbugsDefaults(Project project, JavaCodeQualityPluginConvention pluginConvention) {
+        project.tasks.withType(Findbugs.class) {Findbugs findbugs ->
+            findbugs.conventionMapping.configFile = { pluginConvention.findbugsConfigFile }
+            findbugs.conventionMapping.map('properties') { pluginConvention.findbugsProperties }
+        }
     }
-  }
 
     private void configureCodeNarcDefaults(Project project, GroovyCodeQualityPluginConvention pluginConvention) {
         project.tasks.withType(CodeNarc) { CodeNarc codenarc ->
