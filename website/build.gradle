@@ -60,6 +60,11 @@ buildWebsiteDir = new File(buildDir, 'website')
 checkstyleConfigDir = "$gradleCorePath/config/checkstyle"
 checkstyleProperties.checkstyleConfigDir = checkstyleConfigDir
 checkstyleConfigFileName = "$checkstyleConfigDir/checkstyle.xml"
+
+findbugsConfigDir = "$gradleCorePath/config/findbugs"
+findbugsProperties.findbugsConfigDir = findbugsConfigDir
+findbugsConfigFileName = "$findbugsConfigDir/findbugs.xml"
+
 codeNarcConfigFileName = "$gradleCorePath/config/codenarc.xml"
 
 task userguideContent << {
