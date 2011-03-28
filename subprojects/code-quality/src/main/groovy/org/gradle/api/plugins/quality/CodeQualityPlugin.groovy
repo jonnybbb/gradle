@@ -18,7 +18,6 @@ package org.gradle.api.plugins.quality
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.plugins.GroovyBasePlugin
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPluginConvention
@@ -42,7 +41,7 @@ public class CodeQualityPlugin implements Plugin<Project> {
     private static final String FINDBUGS = "findbugs"
 
 
-    public void apply(Project project) {
+     void apply(final Project project) {
         project.plugins.apply(ReportingBasePlugin.class);
 
         def javaPluginConvention = new JavaCodeQualityPluginConvention(project)
@@ -105,7 +104,7 @@ public class CodeQualityPlugin implements Plugin<Project> {
 
 
             String findbugsTaskName = set.getTaskName(FINDBUGS, null)
-            def findbugs = project.tasks.add(findbugsTaskName, Findbugs);
+            Findbugs findbugs = project.tasks.add(findbugsTaskName, Findbugs.class);
             String compileJavaTaskName = set.getCompileJavaTaskName()
             project.getTasks().getByName(findbugsTaskName).dependsOn(compileJavaTaskName);
             findbugs.description = "Runs Findbugs against the $set.name Java source code."
